@@ -1,7 +1,12 @@
+#include "common.h"
 #include "Money.h"
 
 Money::Money(long long penny)
 {
+  if (penny < 0) 
+  {
+    throw std::string("You can't have negative money");
+  }
   this->rubels = penny / 100;
   this->penny = penny % 100;
 }
@@ -9,11 +14,6 @@ Money::Money(long long penny)
 long long Money::ConvertToPennies(const Money &money)
 {
   return money.rubels * 100 + money.penny;
-}
-
-std::string Money::to_string()
-{
-  return rubels + "." + penny;
 }
 
 bool operator<(const Money &a, const Money &b)
@@ -56,12 +56,23 @@ Money operator-(Money const &a, Money const &b)
   return Money(Money::ConvertToPennies(a) - Money::ConvertToPennies(b));
 }
 
-Money operator*(Money const &a, Money const &b)
+Money operator*(Money const &a, long const &b)
 {
-  return Money(Money::ConvertToPennies(a) * Money::ConvertToPennies(b));
+  return Money(Money::ConvertToPennies(a) * b);
 }
 
-Money operator/(Money const &a, Money const &b)
+Money operator/(Money const &a, long const &b)
 {
-  return Money(Money::ConvertToPennies(a) / Money::ConvertToPennies(b));
+  if (b == 0)
+  {
+    throw std::string("Division by 0");
+  }
+  return Money(Money::ConvertToPennies(a) / b);
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Money& money)
+{
+  os << money.rubels << " p. " << (int)money.penny << " k.";
+  return os;
 }
