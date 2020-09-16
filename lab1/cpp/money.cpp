@@ -26,43 +26,59 @@ long long Money::ConvertToPennies(const Money &money)
   return money.rubels * 100 + money.penny;
 }
 
-bool operator<(const Money &a, const Money &b)
+bool operator<(const Money &a, const Money &b) noexcept
 {
-  return Money::ConvertToPennies(a) < Money::ConvertToPennies(b);
+  if (a.rubels < b.rubels)
+  {
+    return true;
+  }
+  else if (a.rubels == b.rubels)
+  {
+    return a.penny < b.penny;
+  }
+  return false;
 }
 
-bool operator>(Money const &a, Money const &b)
+bool operator>(Money const &a, Money const &b) noexcept
 {
-  return Money::ConvertToPennies(a) > Money::ConvertToPennies(b);
+  if (a.rubels > b.rubels)
+  {
+    return true;
+  }
+  else if (a.rubels == b.rubels)
+  {
+    return a.penny > b.penny;
+  }
+  return false;
 }
 
-bool operator==(Money const &a, Money const &b)
+bool operator==(Money const &a, Money const &b) noexcept
 {
-  return Money::ConvertToPennies(a) == Money::ConvertToPennies(b);
+  return a.rubels == b.rubels && a.penny == b.penny;
 }
 
-bool operator!=(Money const &a, Money const &b)
+bool operator!=(Money const &a, Money const &b) noexcept
 {
   return !(a == b);
 }
 
-bool operator<=(const Money &a, const Money &b)
+bool operator<=(const Money &a, const Money &b) noexcept
 {
   return !(a > b);
 }
 
-bool operator>=(Money const &a, Money const &b)
+bool operator>=(Money const &a, Money const &b) noexcept
 {
   return !(a < b);
 }
 
-Money operator+(Money const &a, Money const &b)
+Money operator+(Money const &a, Money const &b) noexcept
 {
   uint8_t penny_sum = a.penny + b.penny;
   return Money(a.rubels + b.rubels + penny_sum / 100, penny_sum % 100);
 }
 
-Money operator-(Money const &a, Money const &b)
+Money operator-(Money const &a, Money const &b) noexcept
 {
   if (b.penny > a.penny)
   {
@@ -81,7 +97,7 @@ Money operator*(Money const &a, int64_t const &b)
     throw std::string("You can't have negative money");
   }
   uint64_t penny = a.penny * b;
-  return Money(a.rubels + penny / 100, penny % 100);
+  return Money(a.rubels * b + penny / 100, penny % 100);
 }
 
 Money operator/(Money const &a, int64_t const &b)
@@ -95,8 +111,8 @@ Money operator/(Money const &a, int64_t const &b)
     throw std::string("You can't have negative money");
   }
 
-  uint8_t penny_reminder = (a.rubels % b) * 100 / b;
-  uint8_t penny = penny_reminder + a.penny / b;
+  uint64_t penny_reminder = (a.rubels % b) * 100 / b;
+  uint64_t penny = penny_reminder + a.penny / b;
 
   return Money(a.rubels / b + penny / 100, penny % 100);
 }
