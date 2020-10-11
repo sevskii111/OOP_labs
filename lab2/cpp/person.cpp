@@ -1,9 +1,22 @@
 #include "common.h"
 #include "person.h"
 
-Person::Person(Money money)
+Person::Person()
+{
+  recurringPaymentsCounter = 0;
+}
+
+Person::Person(Money money) : Person()
 {
   set_balance(money);
+}
+
+Person::~Person()
+{
+  for (const std::pair<int, RecurringPayment *> &payment : recurringPayments)
+  {
+    delete payment.second;
+  }
 }
 
 void Person::set_balance(Money money)
@@ -60,4 +73,37 @@ std::ostream &operator<<(std::ostream &os, const Person &person)
 {
   os << "This person has " << person.balance;
   return os;
+}
+
+void Person::pay(Payment *payment)
+{
+  Money amount = payment->getAmount();
+  if (payment->getIsPositive())
+  {
+    balance = balance + amount;
+  }
+  else
+  {
+    balance = balance - amount;
+  }
+}
+
+uint Person::addRecurringPayment(RecurringPayment *payment)
+{
+  recurringPayments.emplace(recurringPaymentsCounter, payment);
+  return recurringPaymentsCounter++;
+}
+
+void Person::removeRecrringPayment(int paymentId)
+{
+  delete recurringPayments[paymentId];
+  recurringPayments.erase(paymentId);
+}
+
+void Person::liveADay()
+{
+  for (const std::pair<int, RecurringPayment *> &payment : recurringPayments)
+  {
+    pay(payment.second);
+  }
 }

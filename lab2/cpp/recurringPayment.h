@@ -1,15 +1,15 @@
+#pragma once
 #include "payment.h"
-#include "paymentStatus.h"
 
-class RecurringPayment : Payment
+class RecurringPayment : public Payment
 {
 public:
-    RecurringPayment(tm firstDate, Money totalAmount, tm paymentPeriod)
-        : Payment(firstDate, totalAmount), paymentPeriod(paymentPeriod){};
-    PaymentStatus getPaymentAmont(tm currentTime) override;
+    RecurringPayment(Money _amount, uint _period) : Payment(_amount), period(_period), counter(0) {}
+    RecurringPayment(Money _amount, uint _period, bool _isPositive) : Payment(_amount, _isPositive), period(_period), counter(0) {}
+    Money getAmount() override;
+    uint getPeriod();
 
-private:
-    tm paymentPeriod;
-    int chunksNum;
-    int chunksPaid;
+protected:
+    uint period;
+    uint counter;
 };

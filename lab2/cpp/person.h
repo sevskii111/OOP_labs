@@ -1,17 +1,22 @@
 #pragma once
 #include "common.h"
-#include "stc_entry.h"
 #include "money.h"
+#include "payment.h"
+#include "singlePayment.h"
+#include "recurringPayment.h"
 
-class Person : STC_entry
+class Person
 {
 private:
   void *other;
   Money balance;
+  std::map<int, RecurringPayment *> recurringPayments;
+  uint recurringPaymentsCounter;
 
 public:
-  Person(){};
+  Person();
   Person(Money money);
+  ~Person();
   void set_balance(Money money);
   void set_balance(int64_t penny);
   void set_balance(int64_t rubels, uint8_t penny);
@@ -23,4 +28,9 @@ public:
   void decrease_balance(int64_t rubels, uint8_t penny);
   Money get_balance();
   friend std::ostream &operator<<(std::ostream &os, const Person &person);
+
+  void pay(Payment *payment);
+  uint addRecurringPayment(RecurringPayment *payment);
+  void removeRecrringPayment(int paymentId);
+  void liveADay();
 };

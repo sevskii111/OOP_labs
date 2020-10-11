@@ -1,9 +1,10 @@
+#pragma once
 #include "payment.h"
-#include "paymentStatus.h"
 
-class SinglePayment : Payment
+class SinglePayment : public Payment
 {
 public:
-  SinglePayment(tm firstDate, Money totalAmount) : Payment(firstDate, totalAmount){};
-  PaymentStatus getPaymentAmont(tm currentTime) override;
+    SinglePayment(Money _amount) : Payment(_amount){};
+    SinglePayment(Money _amount, bool _isPositive) : Payment(_amount, _isPositive){};
+    Money getAmount() override;
 };

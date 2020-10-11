@@ -5,11 +5,12 @@
 class Payment
 {
 public:
-  Payment(tm firstDate, Money totalAmount) : firstDate(firstDate), totalAmount(totalAmount){};
-  virtual PaymentStatus getPaymentAmont(tm currentTime);
+    Payment(Money _amount) : amount(_amount), isPositive(false) {}
+    Payment(Money _amount, bool _isPostitive) : amount(_amount), isPositive(_isPostitive) {}
+    virtual Money getAmount();
+    bool getIsPositive();
 
 protected:
-  tm firstDate;
-  tm lastTimeGotPayed;
-  Money totalAmount;
+    Money amount;
+    bool isPositive;
 };

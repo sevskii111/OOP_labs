@@ -1,132 +1,66 @@
 #include "common.h"
 #include "money.h"
 #include "person.h"
+#include "singlePayment.h"
+#include "recurringPayment.h"
+#include "paymentPlan.h"
+#include "wage.h"
 
-void testMoney()
+void testPayments()
 {
-  Money money_zero = Money(0);
-  std::cout << money_zero << std::endl;
-
-  Money money_five_rubels = Money(5, 0);
-  std::cout << money_five_rubels << std::endl;
-
-  Money money_five_rubels_fifty_penny = Money(5, 50);
-  std::cout << money_five_rubels_fifty_penny << std::endl;
-
-  Money money_ten_rubles_fifty_penny = Money(1050);
-  std::cout << money_ten_rubles_fifty_penny << std::endl;
-
-  Money tmp;
-
-  if (money_ten_rubles_fifty_penny > money_five_rubels)
+  Person person(Money(1000, 0));
+  std::cout << person.get_balance() << std::endl;
+  SinglePayment *oneRubelPayment = new SinglePayment(Money(1, 0));
+  person.pay(oneRubelPayment);
+  std::cout << person.get_balance() << std::endl;
+  person.pay(oneRubelPayment);
+  std::cout << person.get_balance() << std::endl;
+  RecurringPayment *netflixSubscription = new RecurringPayment(Money(300, 0), 30);
+  //Первая оплата подпски идёт не в день её оформления, а через period дней
+  uint sid = person.addRecurringPayment(netflixSubscription);
+  person.liveADay();
+  std::cout << person.get_balance() << std::endl;
+  for (int i = 0; i < 29; i++)
   {
-    std::cout << "(" << money_ten_rubles_fifty_penny << ") > (" << money_five_rubels << ")" << std::endl;
+    person.liveADay();
   }
-  else
+  std::cout << person.get_balance() << std::endl;
+  for (int i = 0; i < 30; i++)
   {
-    std::cout << "(" << money_ten_rubles_fifty_penny << ") !> (" << money_five_rubels << ")" << std::endl;
+    person.liveADay();
   }
-
-  if (money_zero > money_five_rubels)
+  std::cout << person.get_balance() << std::endl;
+  person.removeRecrringPayment(sid);
+  for (int i = 0; i < 30; i++)
   {
-    std::cout << "(" << money_zero << ") > (" << money_five_rubels << ")" << std::endl;
+    person.liveADay();
   }
-  else
+  std::cout << person.get_balance() << std::endl;
+  RecurringPayment *wage = new Wage(Money(1000, 0), 30);
+  sid = person.addRecurringPayment(wage);
+  for (int i = 0; i < 12; i++)
   {
-    std::cout << "(" << money_zero << ") !> (" << money_five_rubels << ")" << std::endl;
+    for (int i = 0; i < 30; i++)
+    {
+      person.liveADay();
+    }
+    std::cout << person.get_balance() << std::endl;
   }
-
-  if ((tmp = Money(500)) == money_five_rubels)
+  person.removeRecrringPayment(sid);
+  PaymentPlan *loan = new PaymentPlan(Money(10000, 0), 30, 12);
+  sid = person.addRecurringPayment(loan);
+  for (int i = 0; i < 12; i++)
   {
-    std::cout << "(" << tmp << ") == (" << money_five_rubels << ")" << std::endl;
+    for (int i = 0; i < 30; i++)
+    {
+      person.liveADay();
+    }
+    std::cout << person.get_balance() << std::endl;
   }
-  else
-  {
-    std::cout << "(" << tmp << ") != (" << money_five_rubels << ")" << std::endl;
-  }
-
-  if (money_zero == money_five_rubels)
-  {
-    std::cout << "(" << money_zero << ") == (" << money_five_rubels << ")" << std::endl;
-  }
-  else
-  {
-    std::cout << "(" << money_zero << ") != (" << money_five_rubels << ")" << std::endl;
-  }
-
-  if (money_zero < money_five_rubels)
-  {
-    std::cout << "(" << money_zero << ") < (" << money_five_rubels << ")" << std::endl;
-  }
-  else
-  {
-    std::cout << "(" << money_zero << ") !< (" << money_five_rubels << ")" << std::endl;
-  }
-
-  if (money_ten_rubles_fifty_penny < money_five_rubels)
-  {
-    std::cout << "(" << money_ten_rubles_fifty_penny << ") < (" << money_five_rubels << ")" << std::endl;
-  }
-  else
-  {
-    std::cout << "(" << money_ten_rubles_fifty_penny << ") !< (" << money_five_rubels << ")" << std::endl;
-  }
-
-  std::cout << "(" << money_five_rubels_fifty_penny << ") + (" << money_ten_rubles_fifty_penny << ") = (" << (money_five_rubels_fifty_penny + money_ten_rubles_fifty_penny) << ")" << std::endl;
-  try
-  {
-    std::cout << "(" << money_five_rubels << ") - (" << money_five_rubels_fifty_penny << ") = (" << (money_five_rubels - money_five_rubels_fifty_penny) << ")" << std::endl;
-  }
-  catch (std::string &caught)
-  {
-    std::cout << caught << std::endl;
-  }
-  tmp = Money(10, 0);
-  std::cout << "(" << tmp << ") - (" << money_five_rubels_fifty_penny << ") = (" << (tmp - money_five_rubels_fifty_penny) << ")" << std::endl;
-
-  std::cout << "(" << money_five_rubels_fifty_penny << ") * 2 = (" << (money_five_rubels_fifty_penny * 2) << ")" << std::endl;
-  try
-  {
-    std::cout << "(" << money_five_rubels_fifty_penny << ") * -2 = (" << (money_five_rubels_fifty_penny * -2) << ")" << std::endl;
-  }
-  catch (std::string &caught)
-  {
-    std::cout << caught << std::endl;
-  }
-
-  std::cout << "(" << money_five_rubels_fifty_penny << ") / 2 = (" << (money_five_rubels_fifty_penny / 2) << ")" << std::endl;
-
-  try
-  {
-    std::cout << "(" << money_five_rubels_fifty_penny << ") / 0 = (" << (money_five_rubels_fifty_penny / 0) << ")" << std::endl;
-  }
-  catch (std::string &caught)
-  {
-    std::cout << caught << std::endl;
-  }
-}
-
-void testPerson()
-{
-  Person person1 = Person();
-  std::cout << person1 << std::endl;
-  Person person2 = Person(Money(100521));
-  std::cout << person2 << std::endl;
-  std::cout << "Increase 10 k." << std::endl;
-  person2.increase_balance(Money(10));
-  std::cout << person2 << std::endl;
-  std::cout << "Decrease 35 k." << std::endl;
-  person2.decrease_balance(Money(35));
-  std::cout << person2 << std::endl;
-  std::cout << "Set 12345 k." << std::endl;
-  person2.set_balance(12345);
-  std::cout << person2 << std::endl;
+  person.removeRecrringPayment(sid);
 }
 
 int main()
 {
-  std::cout << "Money test:" << std::endl;
-  testMoney();
-  std::cout << "Person test:" << std::endl;
-  testPerson();
+  testPayments();
 }

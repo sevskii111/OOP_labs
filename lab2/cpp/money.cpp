@@ -1,5 +1,5 @@
 #include "common.h"
-#include "Money.h"
+#include "money.h"
 
 Money::Money(int64_t penny)
 {
@@ -21,7 +21,7 @@ Money::Money(int64_t rubels, uint8_t penny)
   this->penny = penny;
 }
 
-long long Money::ConvertToPennies(const Money &money)
+int64_t Money::ConvertToPennies(const Money &money)
 {
   return money.rubels * 100 + money.penny;
 }
